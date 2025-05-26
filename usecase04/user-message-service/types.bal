@@ -1,8 +1,6 @@
 type SmsRequest record {|
     string message;
     string recipientNumber;
-    string claimId;
-    string 'from;
 |};
 
 type ClaimData record {|
@@ -11,4 +9,16 @@ type ClaimData record {|
     string status;
     decimal claimAmount;
     boolean isEligible;
+|};
+
+type SmsResponse record {|
+    string status;
+    string message;
+    string? messageId;
+|};
+
+type ReplyResponse record {|
+    string? messageId;
+    string status;
+    string? phoneNumber;
 |};
