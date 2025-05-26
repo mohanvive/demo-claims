@@ -1,7 +1,7 @@
 import ballerina/http;
 import ballerinax/alfresco;
 
-listener http:Listener httpDefaultListener = http:getDefaultListener();
+listener http:Listener httpDefaultListener = new(8083);
 
 service /documents on httpDefaultListener {
 
