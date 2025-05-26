@@ -7,9 +7,7 @@ function testSendSms() returns error? {
     http:Client testClient = check new ("http://localhost:9090/api/notification");
     SmsRequest payload = {
         message: "Test SMS",
-        recipientNumber: "+1234567890",
-        claimId: "CL001",
-        'from: "+0987654321"
+        recipientNumber: "+1234567890"
     };
 
     json response = check testClient->/sms.post(payload);
@@ -28,9 +26,7 @@ function testInvalidPhoneNumber() returns error? {
     http:Client testClient = check new ("http://localhost:9090/api/notification");
     SmsRequest payload = {
         message: "Test SMS",
-        recipientNumber: "invalid",
-        claimId: "CL001",
-        'from: "+0987654321"
+        recipientNumber: "invalid"
     };
     json|error response = testClient->/sms.post(payload);
     test:assertTrue(response is error);
