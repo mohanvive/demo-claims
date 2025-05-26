@@ -2,7 +2,7 @@ import ballerina/http;
 import ballerinax/stripe;
 import ballerina/log;
 
-listener http:Listener paymentListener = http:getDefaultListener();
+listener http:Listener paymentListener = new(8080);
 
 service /api/payment on paymentListener {
     resource function post process(PaymentRequest paymentRequest) returns PaymentResponse|error {
