@@ -16,7 +16,7 @@ service /documents on httpDefaultListener {
         }
     }
 
-    resource function get downloadContent(string nodeId, boolean attachment) returns string|error? {
+    resource function get download(string nodeId, boolean attachment) returns string|error? {
         do {
             string|() stringResult = check alfrescoClient->getNodeContent(nodeId);
             return stringResult;
