@@ -1,7 +1,7 @@
 import ballerina/http;
 import ballerinax/twilio;
 
-listener http:Listener messageListener = http:getDefaultListener();
+listener http:Listener messageListener = new(8081);
 
 service /api/notification on messageListener {
     resource function post sms(@http:Payload SmsRequest payload) returns SmsResponse|error {
