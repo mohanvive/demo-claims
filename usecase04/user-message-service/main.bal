@@ -1,26 +1,45 @@
 import ballerina/http;
 import ballerinax/twilio;
 
-service /api/notification on new http:Listener(8080) {
-    resource function post sms(@http:Payload SmsRequest payload) returns json|error {
+listener http:Listener messageListener = http:getDefaultListener();
+
+service /api/notification on messageListener {
+    resource function post sms(@http:Payload SmsRequest payload) returns SmsResponse|error {
         twilio:CreateMessageRequest messageRequest = {
             To: payload.recipientNumber,
             Body: payload.toJsonString(),
-            From: payload.'from
+            From: "+17542914075"
         };
 
         twilio:Message response = check twilioClient->createMessage(messageRequest);
-        string messageId = response?.sid ?: "";
         return {
             status: "success",
             message: "SMS sent successfully",
-            messageId: messageId
+            messageId: response?.sid
         };
     }
 
-    resource function get sms/reply(string fromNumber) returns twilio:Message[]|error? {
+    resource function get sms/reply(string fromNumber, string expectedMessage) returns ReplyResponse|()|error {
         twilio:ListMessageResponse twilioListmessageresponse = check twilioClient->listMessage('from = fromNumber);
-        return twilioListmessageresponse.messages;
+        twilio:Message[]|() messages = twilioListmessageresponse.messages;
+        if messages is () {
+            return messages;
+        }
+        foreach twilio:Message message in messages {
+            if message?.body == expectedMessage {
+                return {
+                    status: "received",
+                    phoneNumber: message?.'from,
+                    messageId: message?.sid
+                };
+            }
+        }
+        return {
+            status: "not_found",
+            phoneNumber: fromNumber,
+            messageId: ()
+        };
     }
+
 }
 

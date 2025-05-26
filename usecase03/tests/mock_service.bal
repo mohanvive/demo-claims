@@ -15,7 +15,7 @@ service /api/payment on new http:Listener(9099) {
     }
 
     resource function post refund(RefundRequest request) returns RefundResponse|error {
-        string paymentIntentId = request.paymentIntentId;
+        string paymentIntentId = request.transactionId;
 
         if paymentIntentId != "mockId" {
             return error("Invalid payment intent ID");
