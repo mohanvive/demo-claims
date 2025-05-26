@@ -22,12 +22,12 @@ type PaymentResponse record {|
 
 type RefundRequest record {|
     string transactionId;
-    string paymentIntentId;
+    decimal refundAmount;
 |};
 
 type RefundResponse record {|
     string refundId;
-    string status;
+    string? status;
     int refundAmount;
     string currency;
 |};

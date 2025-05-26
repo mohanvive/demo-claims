@@ -32,8 +32,8 @@ function testInvalidPaymentAmount() returns error? {
 @test:Config {}
 function testSuccessfulRefund() returns error? {
     RefundRequest refundRequest = {
-        transactionId: "id",
-        paymentIntentId: "mockId"
+        transactionId: "mockId",
+        refundAmount: 50.00
     };
 
     RefundResponse response = check testClient->/refund.post(refundRequest);
@@ -43,8 +43,8 @@ function testSuccessfulRefund() returns error? {
 @test:Config {}
 function testInvalidRefund() returns error? {
     RefundRequest refundRequest = {
-        transactionId: "tx_123",
-        paymentIntentId: "pi_invalid"
+        transactionId: "pi_invalid",
+        refundAmount: 5.00
     };
 
     RefundResponse|error response = testClient->/refund.post(refundRequest);

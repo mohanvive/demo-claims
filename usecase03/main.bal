@@ -2,7 +2,7 @@ import ballerina/http;
 import ballerinax/stripe;
 import ballerina/log;
 
-listener http:Listener paymentListener = new (port = 8081);
+listener http:Listener paymentListener = http:getDefaultListener();
 
 service /api/payment on paymentListener {
     resource function post process(PaymentRequest paymentRequest) returns PaymentResponse|error {
@@ -37,11 +37,11 @@ service /api/payment on paymentListener {
     resource function post refund(RefundRequest refundRequest) returns RefundResponse|error {
         do {
             stripe:Refund refund = check stripeClient->/refunds.post({
-                payment_intent: refundRequest.paymentIntentId
+                payment_intent: refundRequest.transactionId
             });
             return {
                 refundId: refund.id,
-                status: refund?.status ?: "unknown",
+                status: refund?.status,
                 refundAmount: refund.amount,
                 currency: refund.currency
             };

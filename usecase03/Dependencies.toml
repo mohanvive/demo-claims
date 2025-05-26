@@ -222,6 +222,9 @@ dependencies = [
 	{org = "ballerina", name = "lang.value"},
 	{org = "ballerina", name = "observe"}
 ]
+modules = [
+	{org = "ballerina", packageName = "log", moduleName = "log"}
+]
 
 [[package]]
 org = "ballerina"
@@ -342,15 +345,16 @@ modules = [
 ]
 
 [[package]]
-org = "nuvindu"
+org = "wso2"
 name = "payment_gateway"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "test"},
 	{org = "ballerinax", name = "stripe"}
 ]
 modules = [
-	{org = "nuvindu", packageName = "payment_gateway", moduleName = "payment_gateway"}
+	{org = "wso2", packageName = "payment_gateway", moduleName = "payment_gateway"}
 ]
 
