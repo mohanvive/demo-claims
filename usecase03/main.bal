@@ -29,7 +29,7 @@ service /api/payment on paymentListener {
                 currency: paymentRequest.currency
             };
         } on fail error err {
-            log:printError("Error occurred while processing payment", err = err);
+            log:printError("Error occurred while processing payment", err);
             return error("Failed to process payment", err);
         }
     }
