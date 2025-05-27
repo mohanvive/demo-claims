@@ -6,7 +6,7 @@ listener http:Listener httpDefaultListener = http:getDefaultListener();
 
 service /documents on httpDefaultListener {
 
-    resource function post upload(string nodeId, alfresco:NodeBodyCreate payload) returns alfresco:NodeEntry|error {
+    resource function post upload(alfresco:NodeBodyCreate payload, string nodeId = "-root-") returns alfresco:NodeEntry|error {
         do {
             alfresco:NodeEntry alfrescoNodeentry = check alfrescoClient->createNode(nodeId, payload);
             byte[] content = check io:fileReadBytes("resources/hello.txt");
