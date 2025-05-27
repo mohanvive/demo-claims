@@ -30,7 +30,7 @@ service /documents on mockListener {
         };
     }
 
-    resource function get download(string nodeId, boolean attachment) returns string|error {
+    resource function get download(string nodeId) returns string|error {
         if nodeId == "" {
             return error("Invalid node ID");
         }
