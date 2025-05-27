@@ -1,7 +1,7 @@
 import ballerina/http;
 import ballerinax/alfresco;
 
-listener http:Listener httpDefaultListener = new(8083);
+listener http:Listener httpDefaultListener = new (8083);
 
 service /documents on httpDefaultListener {
 
@@ -16,7 +16,7 @@ service /documents on httpDefaultListener {
         }
     }
 
-    resource function get download(string nodeId, boolean attachment) returns string|error? {
+    resource function get download(string nodeId) returns string|error? {
         do {
             string|() stringResult = check alfrescoClient->getNodeContent(nodeId);
             return stringResult;
