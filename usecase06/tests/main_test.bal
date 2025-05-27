@@ -39,8 +39,7 @@ function testUploadDocumentError() returns error? {
 function testDownloadDocument() returns error? {
     http:Client testClient = check new ("http://localhost:8081");
     string response = check testClient->/documents/download.get(
-        nodeId = "testNode123",
-        attachment = true
+        nodeId = "testNode123"
     );
     test:assertEquals(response, "Test document content");
 }
@@ -49,8 +48,7 @@ function testDownloadDocument() returns error? {
 function testDownloadDocumentError() returns error? {
     http:Client testClient = check new ("http://localhost:8081");
     string|error response = testClient->/documents/download.get(
-        nodeId = "",
-        attachment = true
+        nodeId = ""
     );
     test:assertTrue(response is error);
 }
