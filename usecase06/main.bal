@@ -13,7 +13,7 @@ service /documents on httpDefaultListener {
         string nodeId = "";
         string name = "";
         foreach mime:Entity part in bodyParts {
-            var disposition = part.getContentDisposition();
+            mime:ContentDisposition disposition = part.getContentDisposition();
             if disposition is mime:ContentDisposition {
                 if disposition.name == "nodeId" {
                     nodeId = check part.getText();
