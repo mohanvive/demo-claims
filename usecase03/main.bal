@@ -6,10 +6,10 @@ listener http:Listener paymentListener = new(8080);
 
 service /api/payment on paymentListener {
     resource function post process(PaymentRequest paymentRequest) returns PaymentResponse|error {
-        log:printDebug("Received payment request", payload = paymentRequest);
+        log:printInfo("Received payment request", payload = paymentRequest);
 
         do {
-            log:printDebug("Initiating Stripe payment intent creation...");
+            log:printInfo("Initiating Stripe payment intent creation...");
 
             stripe:Payment_intent paymentIntent = check stripeClient->/payment_intents.post({
                 amount: <int>paymentRequest.amount,
@@ -20,7 +20,7 @@ service /api/payment on paymentListener {
                 return_url: paymentRequest.returnUrl
             });
 
-            log:printDebug("Stripe payment intent created successfully", payload = paymentIntent);
+            log:printInfo("Stripe payment intent created successfully", payload = paymentIntent);
 
             return {
                 transactionId: paymentIntent.id,
@@ -35,10 +35,12 @@ service /api/payment on paymentListener {
     }
 
     resource function post refund(RefundRequest refundRequest) returns RefundResponse|error {
+        log:printInfo("Received refund request", payload = refundRequest);
         do {
             stripe:Refund refund = check stripeClient->/refunds.post({
                 payment_intent: refundRequest.transactionId
             });
+            log:printInfo("Refund created successfully", payload = refund);
             return {
                 refundId: refund.id,
                 status: refund?.status,
@@ -46,6 +48,7 @@ service /api/payment on paymentListener {
                 currency: refund.currency
             };
         } on fail error err {
+            log:printError("Error occurred while processing payment", err);
             return error("Failed to process refund", err);
         }
     }
