@@ -7,10 +7,9 @@ service /api/notification on messageListener {
     resource function post sms(@http:Payload SmsRequest payload) returns SmsResponse|error {
         twilio:CreateMessageRequest messageRequest = {
             To: payload.recipientNumber,
-            Body: payload.toJsonString(),
+            Body: payload.message,
             From: "+17542914075"
         };
-
         twilio:Message response = check twilioClient->createMessage(messageRequest);
         return {
             status: "success",
