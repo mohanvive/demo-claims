@@ -47,8 +47,11 @@ service /documents on httpDefaultListener {
 
     resource function get download(string nodeId) returns string|error? {
         do {
-            string|() stringResult = check alfrescoClient->getNodeContent(nodeId);
-            return stringResult;
+            byte[]|() result = check alfrescoClient->getNodeContent(nodeId);
+            if result is () {
+                return error("No content found for nodeId");
+            }
+            return string:fromBytes(result);
 
         } on fail error err {
             // handle error
@@ -59,12 +62,10 @@ service /documents on httpDefaultListener {
     resource function get download/attachment(string nodeId) returns http:Response|error {
         http:Response response = new;
         
-        string|() fileString = check alfrescoClient->getNodeContent(nodeId);
-        byte[] fileContent = [];
-        if fileString is () {
+        byte[]|() fileContent = check alfrescoClient->getNodeContent(nodeId);
+        if fileContent is () {
             return error("No content found for nodeId");
         }
-        fileContent = fileString.toBytes();
 
         alfresco:NodeEntry nodeResponse = check alfrescoClient->getNode(nodeId);
         string fileName = nodeResponse.entry.name;
