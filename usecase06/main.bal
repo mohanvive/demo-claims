@@ -40,11 +40,8 @@ service /documents on httpDefaultListener {
         }
         fileContent = fileString.toBytes();
 
-        alfresco:NodeEntry|error nodeResponse = alfrescoClient->getNode(nodeId);
-        string fileName = "";
-        if nodeResponse is alfresco:NodeEntry {
-            fileName = nodeResponse.entry.name;
-        }
+        alfresco:NodeEntry nodeResponse = check alfrescoClient->getNode(nodeId);
+        string fileName = nodeResponse.entry.name;
 
         response.setHeader("Content-Type", "application/pdf");
         response.setHeader("Content-Disposition", string `attachment; filename="${fileName}"`);
