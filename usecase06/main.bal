@@ -29,4 +29,24 @@ service /documents on httpDefaultListener {
             return error("unhandled error", err);
         }
     }
+
+    resource function get download/attachment(string nodeId) returns http:Response|error {
+        http:Response response = new;
+        
+        string|() fileString = check alfrescoClient->getNodeContent(nodeId);
+        byte[] fileContent = [];
+        if fileString is () {
+            return error("No content found for nodeId");
+        }
+        fileContent = fileString.toBytes();
+
+        alfresco:NodeEntry nodeResponse = check alfrescoClient->getNode(nodeId);
+        string fileName = nodeResponse.entry.name;
+
+        response.setHeader("Content-Type", "application/pdf");
+        response.setHeader("Content-Disposition", string `attachment; filename="${fileName}"`);
+        response.setBinaryPayload(fileContent);
+
+        return response;
+    }
 }
