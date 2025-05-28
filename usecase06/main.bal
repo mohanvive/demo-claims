@@ -1,22 +1,48 @@
 import ballerina/http;
-import ballerina/io;
 import ballerinax/alfresco;
+import ballerina/mime;
 
 listener http:Listener httpDefaultListener = http:getDefaultListener();
 
 service /documents on httpDefaultListener {
+    resource function post upload(http:Request request) returns CustomNodeEntry|error {
+        mime:Entity[] bodyParts = check request.getBodyParts();
+        mime:Entity filePart = bodyParts[0];
+        byte[] fileContent = check filePart.getByteArray();
 
-    resource function post upload(alfresco:NodeBodyCreate payload, string nodeId = "-root-") returns alfresco:NodeEntry|error {
-        do {
-            alfresco:NodeEntry alfrescoNodeentry = check alfrescoClient->createNode(nodeId, payload);
-            byte[] content = check io:fileReadBytes("resources/hello.txt");
-            alfresco:NodeEntry alfrescoNodeentryResult = check alfrescoClient->updateNodeContent(alfrescoNodeentry.entry.id, content);
-            return alfrescoNodeentryResult;
-
-        } on fail error err {
-            // handle error
-            return error("unhandled error", err);
+        string nodeId = "";
+        string name = "";
+        foreach mime:Entity part in bodyParts {
+            mime:ContentDisposition disposition = part.getContentDisposition();
+            if disposition is mime:ContentDisposition {
+                if disposition.name == "nodeId" {
+                    nodeId = check part.getText();
+                } else if disposition.name == "name" {
+                    name = check part.getText();
+                }
+            }
         }
+
+        alfresco:NodeBodyCreate payload = {
+            name: name,
+            nodeType: "cm:content",
+            aspectNames: ["cm:titled"],
+            properties: {
+                "cm:title": name
+            }
+        };
+
+        alfresco:NodeEntry createdNode = check alfrescoClient->createNode(nodeId, payload);
+        alfresco:NodeEntry alfrescoNodeEntryResult = check alfrescoClient->updateNodeContent(createdNode.entry.id, fileContent);
+
+        return {
+            id: alfrescoNodeEntryResult.entry.id,
+            name: alfrescoNodeEntryResult.entry.name,
+            createdByUser: {
+                id: alfrescoNodeEntryResult.entry.createdByUser.id,
+                displayName: alfrescoNodeEntryResult.entry.createdByUser.displayName
+            }
+        };
     }
 
     resource function get download(string nodeId) returns string|error? {
