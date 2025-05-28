@@ -5,7 +5,7 @@ function handleSmsRequest(string body, string fromNumber) returns error? {
     twilio:CreateMessageRequest messageRequest = {
         To: fromNumber,
         Body: "claim approved",
-        From: "+17542914075"
+        From: phoneNumber
     };
     _ = check twilioClient->createMessage(messageRequest);
     io:println("Message received: ", body);
