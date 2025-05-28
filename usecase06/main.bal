@@ -35,12 +35,13 @@ service /documents on httpDefaultListener {
         
         string|() fileString = check alfrescoClient->getNodeContent(nodeId);
         byte[] fileContent = [];
-        if fileString is string {
-            fileContent = fileString.toBytes();
+        if fileString is () {
+            return error("No content found for nodeId");
         }
+        fileContent = fileString.toBytes();
 
-        string fileName = "document.pdf";
-        var nodeResponse = alfrescoClient->getNode(nodeId);
+        alfresco:NodeEntry|error nodeResponse = alfrescoClient->getNode(nodeId);
+        string fileName = "";
         if nodeResponse is alfresco:NodeEntry {
             fileName = nodeResponse.entry.name;
         }
