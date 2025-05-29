@@ -25,7 +25,7 @@ service /api/payment on paymentListener {
             return {
                 transactionId: paymentIntent.id,
                 status: paymentIntent.status,
-                amount: paymentIntent.amount,
+                amount: paymentIntent.amount / 100,
                 currency: paymentRequest.currency
             };
         } on fail error err {
