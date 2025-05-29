@@ -12,7 +12,7 @@ service /api/payment on paymentListener {
             log:printInfo("Initiating Stripe payment intent creation...");
 
             stripe:Payment_intent paymentIntent = check stripeClient->/payment_intents.post({
-                amount: <int>paymentRequest.amount,
+                amount: <int>(paymentRequest.amount * 100),
                 currency: paymentRequest.currency,
                 description: "Payment for order",
                 confirm: true,
