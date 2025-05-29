@@ -10,7 +10,7 @@ service /api/notification on messageListener {
         twilio:CreateMessageRequest messageRequest = {
             To: payload.recipientNumber,
             Body: payload.message,
-            From: "+17542914075"
+            From: phoneNumber
         };
         twilio:Message response = check twilioClient->createMessage(messageRequest);
         return {
