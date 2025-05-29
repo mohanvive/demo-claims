@@ -38,13 +38,14 @@ service /api/payment on paymentListener {
         log:printInfo("Received refund request", payload = refundRequest);
         do {
             stripe:Refund refund = check stripeClient->/refunds.post({
-                payment_intent: refundRequest.transactionId
+                payment_intent: refundRequest.transactionId,
+                amount: <int>(refundRequest.refundAmount * 100)
             });
             log:printInfo("Refund created successfully", payload = refund);
             return {
                 refundId: refund.id,
                 status: refund?.status,
-                refundAmount: refund.amount,
+                refundAmount: refund.amount / 100,
                 currency: refund.currency
             };
         } on fail error err {
